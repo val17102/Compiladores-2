@@ -1,0 +1,28 @@
+class Program
+{
+
+int crack;
+struct MyTest
+{
+	int n;
+	char b;
+	int c[10];
+};
+
+struct OtherTest
+{
+	struct MyTest T[10];
+	int n;
+};
+
+
+void main(int a, boolean yey)
+{
+	struct OtherTest M[5];
+	int i;
+	i = 1;	
+	M[i].T[1].n = 2;
+	
+}
+
+}
