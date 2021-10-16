@@ -6,14 +6,22 @@ class typeTable():
         self.scopeParams = []
         self.structTable = []
         self.errors = []
+        self.addressCount = 0
+        self.generated = []
 
 
     def addVariable(self, type, name, scope, size, array):
+        
         for i in self.scopeTable:
             if (i["scopeId"] == scope):
-                i["variables"].append({"dataType": type, "dataId": name, "scopeId": scope, "size":size, "array": array})
+                i["variables"].append({"dataType": type, "dataId": name, "scopeId": scope, "size":size, "array": array, "value": None, "address":self.addressCount})
                 break
+        if (size != None):
+            self.addressCount += int(size)
         
+
+    def addGeneratedCode(self, code):
+        self.generated.append(code)
 
     def addScope(self, scopeNum, type, name):
         self.scopeTable.append({"scopeId": scopeNum, "dataType": type, "scopeName":name, "variables": [], "params": []})
@@ -31,6 +39,7 @@ class typeTable():
         for i in self.scopeTable:
             if i["scopeId"] == scope:
                 i["params"].append(type)
+                #print("param "+type+" "+scope)
                 break
 
     def checkAttributeExists(self, name, strucId):
@@ -86,6 +95,22 @@ class typeTable():
                         return j["array"]
                 return None
 
+    def getVariableValue(self,name, scope):
+        for i in self.scopeTable:
+            if (i["scopeId"] == scope):
+                for j in i["variables"]:
+                    if j["dataId"] == name:
+                        return j["value"]
+                return None
+
+    def getVariableAddress(self,name, scope):
+        for i in self.scopeTable:
+            if (i["scopeId"] == scope):
+                for j in i["variables"]:
+                    if j["dataId"] == name:
+                        return j["address"]
+                return None
+
     def checkMethodReturnTypeById(self, id):
         for i in self.scopeTable:
             tempId = i["scopeId"]
@@ -117,10 +142,9 @@ class typeTable():
     
     def getScopeParams(self, scope):
         temp = []
-        for i in self.scopeParams:
+        for i in self.scopeTable:
             if (i["scopeId"] == scope):
-                temp.append(i["dataId"])
-        return temp
+                return(i["params"])
 
     def getStructInScope(self, scope, name):
         for i in self.structTable:
@@ -151,6 +175,11 @@ class typeTable():
             if (id == tempId):
                 return i["dataType"]
         return None
+
+    def getScopeVariables(self, scope):
+        for i in self.scopeTable:
+            if (i["scopeId"] == scope):
+                return i["variables"]
 
     def addError(self, error):
         self.errors.append(error)
